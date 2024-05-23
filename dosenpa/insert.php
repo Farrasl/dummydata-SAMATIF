@@ -6,19 +6,16 @@ header('Content-Type: application/json');
 $response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Mendapatkan data dari permintaan POST
     $nim = isset($_POST['nim']) ? $_POST['nim'] : '';
     $nama = isset($_POST['nama']) ? $_POST['nama'] : '';
     $semester = isset($_POST['semester']) ? $_POST['semester'] : '';
     $nip_pa = isset($_POST['nip_pa']) ? $_POST['nip_pa'] : '';
     $status_pa = isset($_POST['status']) ? $_POST['status'] : '';
 
-    // Validasi data
     if (empty($nim) || empty($nama) || empty($semester) || empty($nip_pa) || empty($status_pa)) {
         $response = array('status' => 'error', 'message' => 'Semua field harus diisi.');
     } else {
         try {
-            // Cek apakah NIM sudah ada
             $query_check_nim = "SELECT NIM FROM mahasiswa WHERE NIM = :nim";
             $stmt_check_nim = $conn->prepare($query_check_nim);
             $stmt_check_nim->bindParam(':nim', $nim, PDO::PARAM_STR);
@@ -27,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt_check_nim->rowCount() > 0) {
                 $response = array('status' => 'error', 'message' => 'NIM sudah ada.');
             } else {
-                // Query untuk menambahkan mahasiswa
                 $query_mahasiswa = "INSERT INTO mahasiswa (NIM, Nama, Semester) VALUES (:nim, :nama, :semester)";
                 $stmt_mahasiswa = $conn->prepare($query_mahasiswa);
                 $stmt_mahasiswa->bindParam(':nim', $nim, PDO::PARAM_STR);
@@ -35,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_mahasiswa->bindParam(':semester', $semester, PDO::PARAM_INT);
 
                 if ($stmt_mahasiswa->execute()) {
-                    // Query untuk menambahkan riwayat PA
                     $query_riwayat_pa = "INSERT INTO riwayat_pa (NIM, NIP, status) VALUES (:nim, :nip_pa, :status_pa)";
                     $stmt_riwayat_pa = $conn->prepare($query_riwayat_pa);
                     $stmt_riwayat_pa->bindParam(':nim', $nim, PDO::PARAM_STR);
@@ -59,7 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = array('status' => 'error', 'message' => 'Hanya metode POST yang diizinkan.');
 }
 
-// Mengirim response JSON
 echo json_encode($response, JSON_PRETTY_PRINT);
 
 $conn = null;

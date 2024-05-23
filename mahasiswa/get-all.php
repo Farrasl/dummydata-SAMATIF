@@ -1,11 +1,14 @@
 <?php
-include 'koneksi.php';
+include '../koneksi.php';
 
-$query = "SELECT * FROM mahasiswa";
+header('Content-Type: application/json');
+
 $data_json = array();
 
 try {
-    $stmt = $conn->prepare($query);
+        $query = "SELECT * FROM mahasiswa";
+        $stmt = $conn->prepare($query);
+
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -18,8 +21,7 @@ try {
     $data_json["error"] = "Query gagal: " . $e->getMessage();
 }
 
-header('Content-Type: application/json');
 echo json_encode($data_json, JSON_PRETTY_PRINT);
 
-$conn = null;
+$conn = null;   
 ?>

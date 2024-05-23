@@ -22,7 +22,7 @@ try {
     if ($result) {
         $data_json = $result;
     } else {
-        $data_json["error"] = "Tidak ada data yang ditemukan.";
+        $data_json["error"] = "Dosen dengan NIP tersebut tidak ditemukan.";
     }
 } catch(PDOException $e) {
     $data_json["error"] = "Query gagal: " . $e->getMessage();

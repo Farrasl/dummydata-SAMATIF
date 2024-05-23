@@ -56,7 +56,6 @@ if (isset($_GET['nim'])) {
     $response = array('status' => 'error', 'message' => 'NIM tidak boleh kosong.');
 }
 
-// Mengirim response JSON
 echo json_encode($response, JSON_PRETTY_PRINT);
 
 $conn = null;

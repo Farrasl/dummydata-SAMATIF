@@ -6,16 +6,13 @@ header('Content-Type: application/json');
 $response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Mendapatkan data dari permintaan POST
     $id_surah = isset($_POST['id_surah']) ? $_POST['id_surah'] : '';
     $surah = isset($_POST['surah']) ? $_POST['surah'] : '';
 
-    // Validasi data
     if (empty($id_surah) || empty($surah)) {
         $response = array('status' => 'error', 'message' => 'ID surah dan nama surah harus diisi.');
     } else {
         try {
-            // Query untuk memperbarui surah
             $query = "UPDATE surah SET nama = :surah WHERE id_surah = :id_surah";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':id_surah', $id_surah, PDO::PARAM_INT);
@@ -38,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = array('status' => 'error', 'message' => 'Hanya metode POST yang diizinkan.');
 }
 
-// Mengirim response JSON
 echo json_encode($response, JSON_PRETTY_PRINT);
 
 $conn = null;

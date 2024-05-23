@@ -6,13 +6,13 @@ header('Content-Type: application/json');
 $data_json = array();
 
 try {
-    if (isset($_GET['nama'])) {
-        $nama = $_GET['nama'];
-        $query = "SELECT * FROM dosen WHERE nama = :nama";
+    if (isset($_GET['nim'])) {
+        $nim = $_GET['nim'];
+        $query = "SELECT * FROM mahasiswa WHERE nim = :nim";
         $stmt = $conn->prepare($query);
-        $stmt->bindParam(':nama', $nama, PDO::PARAM_STR);
+        $stmt->bindParam(':nim', $nim, PDO::PARAM_STR);
     } else {
-        $query = "SELECT * FROM dosen";
+        $query = "SELECT * FROM mahasiswa";
         $stmt = $conn->prepare($query);
     }
 
@@ -22,7 +22,7 @@ try {
     if ($result) {
         $data_json = $result;
     } else {
-        $data_json["error"] = "Dosen dengan Nama tersebut tidak ditemukan.";
+        $data_json["error"] = "Mahasiswa dengan NIM tersebut tidak ditemukan.";
     }
 } catch(PDOException $e) {
     $data_json["error"] = "Query gagal: " . $e->getMessage();

@@ -6,20 +6,20 @@ header('Content-Type: application/json');
 $response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $surah = isset($_POST['surah']) ? $_POST['surah'] : '';
+    $nim = isset($_POST['nim']) ? $_POST['nim'] : '';
 
-    if (empty($surah)) {
-        $response = array('status' => 'error', 'message' => 'Nama surah harus diisi.');
+    if (empty($nim)) {
+        $response = array('status' => 'error', 'message' => 'NIM tidak boleh kosong.');
     } else {
         try {
-            $query = "INSERT INTO surah (nama) VALUES (:surah)";
+            $query = "DELETE FROM mahasiswa WHERE nim = :nim";
             $stmt = $conn->prepare($query);
-            $stmt->bindParam(':surah', $surah, PDO::PARAM_STR);
+            $stmt->bindParam(':nim', $nim, PDO::PARAM_STR);
 
             if ($stmt->execute()) {
-                $response = array('status' => 'success', 'message' => 'Data surah berhasil ditambahkan.');
+                $response = array('status' => 'success', 'message' => 'Data mahasiswa berhasil dihapus.');
             } else {
-                $response = array('status' => 'error', 'message' => 'Gagal menambahkan data surah.');
+                $response = array('status' => 'error', 'message' => 'Gagal menghapus data mahasiswa.');
             }
         } catch (PDOException $e) {
             $response = array('status' => 'error', 'message' => 'Query gagal: ' . $e->getMessage());

@@ -8,11 +8,11 @@ $data_json = array();
 try {
     if (isset($_GET['nama'])) {
         $nama = $_GET['nama'];
-        $query = "SELECT * FROM dosen WHERE nama = :nama";
+        $query = "SELECT * FROM mahasiswa WHERE nama = :nama";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':nama', $nama, PDO::PARAM_STR);
     } else {
-        $query = "SELECT * FROM dosen";
+        $query = "SELECT * FROM mahasiswa";
         $stmt = $conn->prepare($query);
     }
 
@@ -22,7 +22,7 @@ try {
     if ($result) {
         $data_json = $result;
     } else {
-        $data_json["error"] = "Dosen dengan Nama tersebut tidak ditemukan.";
+        $data_json["error"] = "Mahasiswa dengan Nama tersebut tidak ditemukan.";
     }
 } catch(PDOException $e) {
     $data_json["error"] = "Query gagal: " . $e->getMessage();

@@ -7,14 +7,12 @@ $data_json = array();
 
 function getDosenMahasiswa($conn, $nim = null) {
     if ($nim) {
-        // Query untuk mengambil data mahasiswa dan dosen PA berdasarkan NIM
         $query_mahasiswa = "SELECT m.NIM, m.Nama, m.Semester, d.nip, d.nama AS nama_dosen
                             FROM mahasiswa m
                             INNER JOIN riwayat_pa r ON m.NIM = r.NIM
                             INNER JOIN dosen d ON r.NIP = d.nip
                             WHERE m.NIM = :nim";
     } else {
-        // Query untuk mengambil semua dosen dan mahasiswa yang mereka bimbing
         $query_dosen = "SELECT nip, nama FROM dosen";
     }
 
