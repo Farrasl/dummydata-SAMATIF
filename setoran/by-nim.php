@@ -2,6 +2,9 @@
 include '../koneksi.php';
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 $response = array();
 
@@ -17,13 +20,14 @@ if (isset($_GET['nim'])) {
     if ($nim_exists == 0) {
         $response = array('status' => 'error', 'message' => 'Mahasiswa dengan NIM tersebut tidak ditemukan.');
     } else {
-        $sql_setoran = "SELECT m.Nama AS Nama_Mahasiswa, s.nama AS nama_surah, i.tanggal, i.kelancaran, i.tajwid, i.makhrajul_huruf
+        $sql_setoran = "SELECT i.id_setoran, m.Nama AS Nama_Mahasiswa, s.nama AS nama_surah, i.tanggal, i.kelancaran, i.tajwid, i.makhrajul_huruf
                         FROM setoran rs
                         JOIN setoran i ON rs.id_setoran = i.id_setoran
                         JOIN riwayat_pa pa ON rs.NIM = pa.NIM
                         JOIN surah s ON i.id_surah = s.id_surah
                         JOIN mahasiswa m ON rs.NIM = m.NIM
-                        WHERE m.NIM = :nim";
+                        WHERE m.NIM = :nim
+                        ORDER BY s.id_surah ASC"; // Menambahkan ORDER BY untuk mengurutkan berdasarkan ID surah secara ascending
 
         $stmt_setoran = $conn->prepare($sql_setoran);
         $stmt_setoran->bindParam(':nim', $nim, PDO::PARAM_STR);
@@ -44,28 +48,7 @@ if (isset($_GET['nim'])) {
         );
     }
 } else {
-    $sql_all_setoran = "SELECT m.Nama AS Nama_Mahasiswa, s.nama AS nama_surah, i.tanggal, i.kelancaran, i.tajwid, i.makhrajul_huruf
-                        FROM setoran rs
-                        JOIN setoran i ON rs.id_setoran = i.id_setoran
-                        JOIN riwayat_pa pa ON rs.NIM = pa.NIM
-                        JOIN surah s ON i.id_surah = s.id_surah
-                        JOIN mahasiswa m ON rs.NIM = m.NIM";
-
-    $stmt_all_setoran = $conn->prepare($sql_all_setoran);
-    $stmt_all_setoran->execute();
-
-    $all_setoran_list = array();
-
-    if ($stmt_all_setoran->rowCount() > 0) {
-        while ($row = $stmt_all_setoran->fetch(PDO::FETCH_ASSOC)) {
-            $all_setoran_list[] = $row;
-        }
-    }
-
-    $response = array(
-        'status' => 'success',
-        'setoran' => $all_setoran_list
-    );
+    $response = array('status' => 'error', 'message' => 'Inputkan NIM Terlebih Dahulu');
 }
 
 echo json_encode($response, JSON_PRETTY_PRINT);

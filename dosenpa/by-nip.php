@@ -6,12 +6,12 @@ header('Content-Type: application/json');
 $data_json = array();
 
 function getDosenMahasiswa($conn, $nip = null) {
-    if ($nip) {
-        $query_dosen = "SELECT nip, nama FROM dosen WHERE nip = :nip";
-    } else {
-        $query_dosen = "SELECT nip, nama FROM dosen";
+    if (!$nip) {
+        return array('status' => 'error', 'message' => 'Input NIP Terlebih Dahulu');
     }
 
+    $query_dosen = "SELECT nip, nama FROM dosen WHERE nip = :nip";
+    
     $data_dosen = array();
 
     try {

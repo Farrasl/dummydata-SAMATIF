@@ -2,6 +2,7 @@
 include '../koneksi.php';
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *'); // Tambahkan baris ini untuk mengizinkan akses lintas domain
 
 $response = array();
 
@@ -21,29 +22,33 @@ if (isset($_GET['nim'])) {
             if ($result_mahasiswa) {
                 $nama_mahasiswa = $result_mahasiswa['Nama'];
 
-                $query_setoran = "SELECT s.nama AS surah
-                                FROM surah s
-                                LEFT JOIN setoran i ON s.id_surah = i.id_surah
-                                WHERE i.NIM = :nim
-                                GROUP BY s.nama";
-                $stmt_setoran = $conn->prepare($query_setoran);
-                $stmt_setoran->bindParam(':nim', $nim, PDO::PARAM_STR);
-                $stmt_setoran->execute();
-                $result_setoran = $stmt_setoran->fetchAll(PDO::FETCH_ASSOC);
+                $percentages = array();
 
-                $query_surah_belum_setor = "SELECT nama AS surah FROM surah WHERE id_surah NOT IN 
-                                            (SELECT id_surah FROM setoran WHERE NIM = :nim)";
-                $stmt_surah_belum_setor = $conn->prepare($query_surah_belum_setor);
-                $stmt_surah_belum_setor->bindParam(':nim', $nim, PDO::PARAM_STR);
-                $stmt_surah_belum_setor->execute();
-                $result_surah_belum_setor = $stmt_surah_belum_setor->fetchAll(PDO::FETCH_ASSOC);
+                // Hitung persentase untuk setiap langkah keberhasilan
+                $langkahs = array(
+                    "Kerja Praktek" => range(1, 8),
+                    "Seminar Kerja Praktek" => range(9, 16),
+                    "Judul Tugas Akhir" => range(17, 22),
+                    "Seminar Proposal" => range(23, 34),
+                    "Sidang Tugas Akhir" => range(35, 37)
+                );
+
+                foreach ($langkahs as $langkah => $range) {
+                    $query_count = "SELECT COUNT(*) AS count FROM setoran WHERE NIM = :nim AND id_surah IN (" . implode(",", $range) . ")";
+                    $stmt_count = $conn->prepare($query_count);
+                    $stmt_count->bindParam(':nim', $nim, PDO::PARAM_STR);
+                    $stmt_count->execute();
+                    $result_count = $stmt_count->fetch(PDO::FETCH_ASSOC);
+                    $percent = ($result_count['count'] / count($range)) * 100;
+
+                    $percentages[] = array('lang' => $langkah, 'percent' => $percent);
+                }
 
                 $response = array(
                     'status' => 'success',
                     'Nama' => $nama_mahasiswa,
                     'NIM' => $nim,
-                    'surah_sudah_setor' => $result_setoran,
-                    'surah_belum_setor' => $result_surah_belum_setor
+                    'percentages' => $percentages
                 );
             } else {
                 $response = array('status' => 'error', 'message' => 'Mahasiswa dengan NIM tersebut tidak ditemukan.');
