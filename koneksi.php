@@ -1,9 +1,9 @@
 <?php
 class Koneksi {
     private $servername = "localhost";
-    private $username = "root";
-    private $password = "";
-    private $dbname = "dummy_data2";
+    private $username = "id22295785_samatif";
+    private $password = "#Samatif123";
+    private $dbname = "id22295785_samatifdb";
     public $conn;
 
     public function __construct() {
