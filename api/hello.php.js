@@ -2,7 +2,7 @@
 
 module.exports = (req, res) => {
     const { spawn } = require('child_process');
-    const php = spawn('php', ['index.php']);
+    const php = spawn('php', ['koneksi.php']);
   
     php.stdout.on('data', (data) => {
       res.status(200).send(data.toString());
